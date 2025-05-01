@@ -1,30 +1,25 @@
 package com.example.springexample;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        Date date1 = new Date();
 
-        Thread.sleep(2000);//приостановим работу программы на 2 секунды
-        Date date2 = new Date();
-        LocalDate today = LocalDate.now();
-        LocalDate birthday = LocalDate.of(2025,12,31);
+        //todo БЛОК выдает разницу между настоящей датой и заплонированной
+        // Предположим, сегодняшняя дата
+        LocalDate currentDate = LocalDate.now();
+        // Пример даты из таблицы (например, 5 мая 2025 года)
+        LocalDate dateFromTable = LocalDate.of(2025, 5, 15);
+        // Разница в днях между текущей датой и датой из таблицы
+        long daysBetween = ChronoUnit.DAYS.between(currentDate, dateFromTable);
+        System.out.println(daysBetween);
+        /*********************************************************************************/
 
-       // System.out.println(date2.before(date1));
-        System.out.println(today.isAfter.birthday);
 
 
-
-
-    }
-    public static void collectBirthdays(int year, int month, int day){
-        LocalDate birthday = LocalDate.of(year,month,day);
-        LocalDate today = LocalDate.now();
-        for (int i = 0; i <30; i++) {
-
-            System.out.println(birthday.plusYears(1));
         }
 /*
  while (today.isAfter(birthday.plusYears(1))) {
@@ -35,4 +30,3 @@ public class Main {
 
 
     }
-}
