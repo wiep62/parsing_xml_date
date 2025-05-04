@@ -27,25 +27,63 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         final int NUM_OF_COLUMNS = 8;
+        final int NUM_OF_ROWS = 150;
+        final double SERIAL_NUMBER  = 4031604;
 
         //todo Блок прохождения по датам и формирование новых строчек в новом листе файла с названием текущей даты
         //todo читаем файл: не можем вычитывать все данные как Str, используем универсальную функцию
 
         FileInputStream fis = new FileInputStream("111.xls");
         Workbook wb = new HSSFWorkbook(fis); //todo конструктор создания книги
-        System.out.println(wb.getSheetAt(0).getRow(4).getCell(2));
+        Sheet sheet = wb.getSheetAt(1); //считываем данные со страницы
+
+        //Sheet sheet0  = wb.createSheet("TEST_PAGES"); //создаем переменную вкладка
+
+       // System.out.println(wb.getSheetAt(0).getRow(4).getCell(2));
 int i = 1;
+int z = 0;
 
+        Row row;
+        Cell cell;
+        for (int rowIndex = 0; rowIndex < NUM_OF_ROWS; rowIndex++) {
+           row = sheet.getRow((short) rowIndex);
+          /*   for (int colIndex = 0; colIndex < NUM_OF_COLUMNS; colIndex++) {
+                cell = row.createCell((short) colIndex);
+                cell.setCellValue(colIndex * (rowIndex + 1.0));
+            }*/
         //todo перебор всех ячеек которые существуют:
-        for (Row row : wb.getSheetAt(1)) {
-            for (Cell cell : row) {
-        System.out.print( getCellText(cell) + " "); //getCellText(cell) - выдает значение ячейки
-if(getCellText(cell).isEmpty() && i++ % NUM_OF_COLUMNS == 0){   //разделяем строки
-    System.out.println("\n");
-}
-    }
-        }
+       // for (Row row : wb.getSheetAt(1)) {
+            System.out.println(z++);
+for (int j = 0; j < NUM_OF_COLUMNS; j++) {
+    if (getCellText(row.getCell(j)).isEmpty()){
+        row.getCell(j).setCellValue((short) 0);
 
+    }
+
+}
+            for (int j = 0; j < NUM_OF_COLUMNS; j++) {
+//todo проверяем датчики меньше серийного номера:
+            if (Double.parseDouble(getCellText(row.getCell(3)) ) <=  SERIAL_NUMBER) {
+
+                    System.out.print( getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+
+                    if(i++ % NUM_OF_COLUMNS == 0){   //разделяем строки
+                        System.out.println("\n");
+                    }
+                    //todo зарлдняем новый лист:
+
+
+                }
+            }
+
+
+        }
+//работа с листами:
+
+
+        FileOutputStream fos  = new FileOutputStream("111.xls");
+        wb.write(fos); //пишем в поток
+        fos.close();
         fis.close();
 
 
@@ -118,6 +156,7 @@ if(getCellText(cell).isEmpty() && i++ % NUM_OF_COLUMNS == 0){   //разделя
     public static String getCellText(Cell cell) {
         String result = "";
         switch (cell.getCellType()) {
+
             case Cell.CELL_TYPE_STRING:
                 result = cell.getRichStringCellValue().getString();
                 break;
