@@ -23,10 +23,10 @@ import java.util.Date;
 import java.util.Iterator;
 
 public class Main {
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd");
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("MM:yyyy");
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        final int NUM_OF_COLUMNS = 8;
+        final int NUM_OF_COLUMNS = 7;
         final int NUM_OF_ROWS = 150;
         final double SERIAL_NUMBER  = 4031604;
 
@@ -34,10 +34,21 @@ public class Main {
         //todo читаем файл: не можем вычитывать все данные как Str, используем универсальную функцию
 
         FileInputStream fis = new FileInputStream("111.xls");
-        Workbook wb = new HSSFWorkbook(fis); //todo конструктор создания книги
-        Sheet sheet = wb.getSheetAt(1); //считываем данные со страницы
+        FileOutputStream fos  = new FileOutputStream("OUTput.xls");
 
-        //Sheet sheet0  = wb.createSheet("TEST_PAGES"); //создаем переменную вкладка
+        Workbook wb = new HSSFWorkbook(fis); //todo конструктор создания книги
+        Workbook wb1 = new XSSFWorkbook();
+     //   XSSFWorkbook wb = new XSSFWorkbook();
+      //  XSSFWorkbook wb1 = new XSSFWorkbook();
+
+
+        Sheet sheet = wb.getSheetAt(1); //считываем данные со страницы
+        Sheet sheet0  = wb1.createSheet("TEST_PAGES"); //создаем переменную вкладка
+
+      //  XSSFSheet sheet = wb.getSheetAt(1);
+      //  XSSFSheet sheet0 = wb1.createSheet("TEST");
+
+
 
        // System.out.println(wb.getSheetAt(0).getRow(4).getCell(2));
 int i = 1;
@@ -47,43 +58,82 @@ int z = 0;
         Cell cell;
         for (int rowIndex = 0; rowIndex < NUM_OF_ROWS; rowIndex++) {
            row = sheet.getRow((short) rowIndex);
-          /*   for (int colIndex = 0; colIndex < NUM_OF_COLUMNS; colIndex++) {
-                cell = row.createCell((short) colIndex);
-                cell.setCellValue(colIndex * (rowIndex + 1.0));
-            }*/
+
         //todo перебор всех ячеек которые существуют:
        // for (Row row : wb.getSheetAt(1)) {
-            System.out.println(z++);
-for (int j = 0; j < NUM_OF_COLUMNS; j++) {
-    if (getCellText(row.getCell(j)).isEmpty()){
-        row.getCell(j).setCellValue((short) 0);
+            System.out.println("rowIndex = " + z++);
 
-    }
+            Row row1 = sheet0.createRow(rowIndex);
 
-}
-            for (int j = 0; j < NUM_OF_COLUMNS; j++) {
+            for (int j = 0; j <= NUM_OF_COLUMNS; j++) {
+                if (getCellText(row.getCell(j)).isEmpty()){ //todo проверка ячейка на null
+                    row.getCell(j).setCellValue((short) 0);
+                }
+
+                System.out.println("j = " + j);
 //todo проверяем датчики меньше серийного номера:
             if (Double.parseDouble(getCellText(row.getCell(3)) ) <=  SERIAL_NUMBER) {
+                Cell cellNew = row1.createCell(j);
 
                     System.out.print( getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+                //todo зарлдняем новый лист:
 
-                    if(i++ % NUM_OF_COLUMNS == 0){   //разделяем строки
-                        System.out.println("\n");
+                switch (j){
+                    case 0:
+                        cellNew.setCellValue(getCellText(row.getCell(j)));
+                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+                        break;
+                    case 1:
+                        cellNew.setCellValue(getCellText(row.getCell(j)));
+                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+                        break;
+                    case 2:
+                        cellNew.setCellValue(getCellText(row.getCell(j)));
+                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+
+                        break;
+                    case 3:
+                        cellNew.setCellValue(getCellText(row.getCell(j)));
+                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+
+                        break;
+                    case 4:
+                        cellNew.setCellValue(getCellText(row.getCell(j)));
+                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+
+                        break;
+                    case 5:
+                        cellNew.setCellValue(getCellText(row.getCell(j)));
+                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+
+                        break;
+                    case 6:
+                        cellNew.setCellValue(getCellText(row.getCell(j)));
+                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+
+                        break;
+                        case 7:
+                            cellNew.setCellValue(getCellText(row.getCell(j)));
+                            System.out.print("\n" + "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+
+                            System.out.println("\n");
+                            break;
                     }
-                    //todo зарлдняем новый лист:
 
 
-                }
             }
+
+            }
+
 
 
         }
 //работа с листами:
 
 
-        FileOutputStream fos  = new FileOutputStream("111.xls");
-        wb.write(fos); //пишем в поток
+        wb1.write(fos); //пишем в поток
         fos.close();
+        wb1.close();
         fis.close();
 
 
@@ -96,21 +146,7 @@ for (int j = 0; j < NUM_OF_COLUMNS; j++) {
         System.out.println(wb.getSheetAt(1).getRow(0).getCell(4));
 */
 
-/*
-        XSSFSheet sheet = (XSSFSheet) wb.createSheet("linechart");
-        final int NUM_OF_ROWS = 3;
-        final int NUM_OF_COLUMNS = 10;
-        // Create a row and put some cells in it. Rows are 0 based.
-        Row row;
-        Cell cell;
-        for (int rowIndex = 0; rowIndex < NUM_OF_ROWS; rowIndex++) {
-            row = sheet.createRow((short) rowIndex);
-            for (int colIndex = 0; colIndex < NUM_OF_COLUMNS; colIndex++) {
-                cell = row.createCell((short) colIndex);
-                cell.setCellValue(colIndex * (rowIndex + 1.0));
-            }
-        }
-*/
+
 
     }
 
