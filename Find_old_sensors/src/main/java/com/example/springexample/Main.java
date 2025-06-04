@@ -15,180 +15,140 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 
+import static com.example.springexample.CellAndRow.formatCell;
+import static com.example.springexample.CellAndRow.getCellText;
+import static com.example.springexample.DateFormat.getHowManyMonths;
+
 public class Main {
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat("MM:yyyy");
+   // static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+   private static SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        final int NUM_OF_COLUMNS = 7;
-        final int NUM_OF_ROWS = 150;
-        final double SERIAL_NUMBER  = 4031604;
+        CellAndRow cellAndRow = new CellAndRow();
 
-        //todo Блок прохождения по датам и формирование новых строчек в новом листе файла с названием текущей даты
-        //todo читаем файл: не можем вычитывать все данные как Str, используем универсальную функцию
+     String inputFile = "999.xls";
+String outputFile = "OUTput111133.xls";
+int NUM_OF_ROWS = 70;
+int NUM_OF_COLUMNS = 7;
+String nameGetSheet = "11";
+String nameCreateSheet = "В поверку";
 
-        FileInputStream fis = new FileInputStream("111.xls");
-        FileOutputStream fos  = new FileOutputStream("OUTput.xls");
-
+        FileInputStream fis = new FileInputStream(inputFile);
         Workbook wb = new HSSFWorkbook(fis); //todo конструктор создания книги
-        Workbook wb1 = new XSSFWorkbook();
-     //   XSSFWorkbook wb = new XSSFWorkbook();
-      //  XSSFWorkbook wb1 = new XSSFWorkbook();
+        Workbook wb1 = new HSSFWorkbook();
+        Sheet sheet = wb.getSheet(nameGetSheet); //считываем данные со страницы
+        Sheet sheet0  = wb1.createSheet(nameCreateSheet); //создаем переменную вкладка
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
+        LocalDate today = LocalDate.now(); //сегодняшняя дата
+        String textToday = today.format(formatter); //сегодняшняя дата в текстовом представлении
 
-        Sheet sheet = wb.getSheetAt(1); //считываем данные со страницы
-        Sheet sheet0  = wb1.createSheet("TEST_PAGES"); //создаем переменную вкладка
+        // Ввод второй даты
 
-      //  XSSFSheet sheet = wb.getSheetAt(1);
-      //  XSSFSheet sheet0 = wb1.createSheet("TEST");
+        for(int i = 1; i <=NUM_OF_ROWS; i++){
+            if (sheet.getRow(i).getCell(5) != null) {
+                String secondDateInput = getCellText(sheet.getRow(i).getCell(5));
+              //  System.out.println(secondDateInput);
+                //todo преобразование даты:
 
-
-
-       // System.out.println(wb.getSheetAt(0).getRow(4).getCell(2));
-int i = 1;
-int z = 0;
-
-        Row row;
-        Cell cell;
-        for (int rowIndex = 0; rowIndex < NUM_OF_ROWS; rowIndex++) {
-           row = sheet.getRow((short) rowIndex);
-
-        //todo перебор всех ячеек которые существуют:
-       // for (Row row : wb.getSheetAt(1)) {
-            System.out.println("rowIndex = " + z++);
-
-            Row row1 = sheet0.createRow(rowIndex);
-
-            for (int j = 0; j <= NUM_OF_COLUMNS; j++) {
-                if (getCellText(row.getCell(j)).isEmpty()){ //todo проверка ячейка на null
-                    row.getCell(j).setCellValue((short) 0);
+                if (secondDateInput.matches("^\\d{2}\\.\\d{4}$")) {
+                    // Если дней нет, добавляем "01" к строке даты
+                    secondDateInput = "01." + secondDateInput;
+                    System.out.println("Добавили 01: ");
                 }
 
-                System.out.println("j = " + j);
-//todo проверяем датчики меньше серийного номера:
-            if (Double.parseDouble(getCellText(row.getCell(3)) ) <=  SERIAL_NUMBER) {
-                Cell cellNew = row1.createCell(j);
+                // System.out.println(secondDateInput);
+                // System.out.println("Today : " + textToday);
+                //   System.out.println("secondDateInput : " + secondDateInput);
 
-                    System.out.print( getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
-                //todo зарлдняем новый лист:
+                LocalDate parseToday = LocalDate.parse(textToday, formatter);  //преобразуем текст в дату
+                LocalDate parseSecondDateInput = LocalDate.parse(secondDateInput, formatter);  //преобразуем текст в дату
 
-                switch (j){
-                    case 0:
-                        cellNew.setCellValue(getCellText(row.getCell(j)));
-                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
-                        break;
-                    case 1:
-                        cellNew.setCellValue(getCellText(row.getCell(j)));
-                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
-                        break;
-                    case 2:
-                        cellNew.setCellValue(getCellText(row.getCell(j)));
-                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+                // Вычисление разницы между датами
+                Period period = Period.between(parseToday, parseSecondDateInput);
+                //  System.out.println("parseToday : " + parseToday + "\n" + "parseSecondDateInput : " + parseSecondDateInput);
+                ///System.out.println(period);
+                // Получение разницы в месяцах
+                int monthsDifference = period.getYears() * 12 + period.getMonths();
 
-                        break;
-                    case 3:
-                        cellNew.setCellValue(getCellText(row.getCell(j)));
-                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+                //   System.out.println("Разница между датами в месяцах: " + monthsDifference);
 
-                        break;
-                    case 4:
-                        cellNew.setCellValue(getCellText(row.getCell(j)));
-                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+                if (monthsDifference <=3){
+                    System.out.println("До оканчания поверки осталось: " + monthsDifference + " месяцев");
 
-                        break;
-                    case 5:
-                        cellNew.setCellValue(getCellText(row.getCell(j)));
-                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+                    Row row = sheet0.createRow(i);
 
-                        break;
-                    case 6:
-                        cellNew.setCellValue(getCellText(row.getCell(j)));
-                        System.out.print("\n" +  "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+                    for (int j = 0; j <= NUM_OF_COLUMNS; j++) {
 
-                        break;
-                        case 7:
-                            cellNew.setCellValue(getCellText(row.getCell(j)));
-                            System.out.print("\n" + "ZAPISALI : " + getCellText(row.getCell(j)) + " "); //getCellText(cell) - выдает значение ячейки
+    //Cell cell = row.createCell(j);
+Cell cell = row.createCell(j);
+    switch (j) {
+        case 0:
+            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
 
-                            System.out.println("\n");
-                            break;
-                    }
+            break;
+        case 1:
+            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+
+            break;
+        case 2:
+            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
 
 
-            }
-
-            }
-
-
-
-        }
-//работа с листами:
+            break;
+        case 3:
+            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
 
 
-        wb1.write(fos); //пишем в поток
-        fos.close();
-        wb1.close();
-        fis.close();
+            break;
+        case 4:
+            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
 
+            break;
+        case 5:
+            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
 
-        /*
-         FileInputStream fis = new FileInputStream("111.xls");
-         Workbook wb = new XSSFWorkbook(fis); //todo конструктор создания книги
+            break;
+        case 6:
+            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
 
-     System.out.println(wb.getSheetAt(1).getRow(0).getCell(0));
-        System.out.println(wb.getSheetAt(1).getRow(0).getCell(1));
-        System.out.println(wb.getSheetAt(1).getRow(0).getCell(4));
-*/
+            break;
+        case 7:
+            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
 
-
+            break;
 
     }
 
 
-    //todo перебор всех ячеек которые существуют:
+}
+                }
+                // return monthsDifference;
 
 
-    //todo БЛОК выдает разницу между настоящей датой и заплонированной
-    // Предположим, сегодняшняя дата
-       /* LocalDate currentDate = LocalDate.now();
-        // Пример даты из таблицы (например, 5 мая 2025 года)
-        LocalDate dateFromTable = LocalDate.of(2025, 5, 15);
-        // Разница в днях между текущей датой и датой из таблицы
-        long daysBetween = ChronoUnit.DAYS.between(currentDate, dateFromTable);
-        System.out.println(daysBetween);*/
-
-    /*********************************************************************************/
-//todo Блок парсинга текста в дату:
-    // String dateString = "2025-05-01"; // Текстовое значение даты
-    /*    ArrayList <String> dateString = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd"); // Формат даты
-        dateString.add("2025.05.01");
-        dateString.add("2024.02.01");
-        dateString.add("2022.04.23");
-        dateString.add("2325.02.19");
-        try {
-         for (int i = 0; i < dateString.size(); i++) {
-             LocalDate date = LocalDate.parse(dateString.get(i), formatter); // Парсинг строки в LocalDate
-             System.out.println("Parsed LocalDate: " + date);
-         }
-        } catch (DateTimeParseException e) {
-            System.out.println("Ошибка при парсинге даты: " + e.getMessage());
-        }*/
+            } else {
+                System.out.println("значение отсутствует");
+            }
 
 
+            FileOutputStream fos  = new FileOutputStream(outputFile);
 
-/*
- while (today.isAfter(birthday.plusYears(1))) {
-           System.out.println(birthday.plusYears(1));
+         wb1.write(fos); //пишем в поток
+        fos.close();
+       wb1.close();
 
-       }
-*/
+          fis.close();
+
+    }}
     public static String getCellText(Cell cell) {
         String result = "";
         switch (cell.getCellType()) {
@@ -198,7 +158,7 @@ int z = 0;
                 break;
             case Cell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
-                    result = dateFormat.format(cell.getDateCellValue());
+                    result = dateFormat1.format(cell.getDateCellValue());
                 } else {
                     result = Double.toString(cell.getNumericCellValue());
                 }
@@ -214,4 +174,49 @@ int z = 0;
         return result;
     }
 
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*        System.out.println(wb.getSheetAt(1).getRow(3).getCell(0));
+        System.out.println(wb.getSheetAt(1).getRow(3).getCell(1));
+
+        //HashMap numbersAndNames = new HashMap();
+
+}
+}
+
+//formatCell(NUM_OF_ROWS, NUM_OF_COLUMNS, sheet, sheet0);
+
+       /* Row row = sheet.createRow(0);
+
+        Cell cell0 = row.createCell(0);
+        cell0.setCellValue(2);
+
+
+
+    //todo БЛОК выдает разницу между настоящей датой и заплонированной
+    // Предположим, сегодняшняя дата
+       /* LocalDate currentDate = LocalDate.now();
+        // Пример даты из таблицы (например, 5 мая 2025 года)
+        LocalDate dateFromTable = LocalDate.of(2025, 5, 15);
+        // Разница в днях между текущей датой и датой из таблицы
+        long daysBetween = ChronoUnit.DAYS.between(currentDate, dateFromTable);
+        System.out.println(daysBetween);*/
+
