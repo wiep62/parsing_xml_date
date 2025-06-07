@@ -35,11 +35,11 @@ public class Main {
     public static void main(String[] args) throws InterruptedException, IOException {
         CellAndRow cellAndRow = new CellAndRow();
 
-     String inputFile = "999.xls";
+     String inputFile = "777.xls";
 String outputFile = "OUTput111133.xls";
-int NUM_OF_ROWS = 70;
+int NUM_OF_ROWS = 132;
 int NUM_OF_COLUMNS = 7;
-String nameGetSheet = "11";
+String nameGetSheet = "ГРП";
 String nameCreateSheet = "В поверку";
 
         FileInputStream fis = new FileInputStream(inputFile);
@@ -55,8 +55,8 @@ String nameCreateSheet = "В поверку";
         // Ввод второй даты
 
         for(int i = 1; i <=NUM_OF_ROWS; i++){
-            if (sheet.getRow(i).getCell(5) != null) {
-                String secondDateInput = getCellText(sheet.getRow(i).getCell(5));
+            if (sheet.getRow(i).getCell(6) != null) {
+                String secondDateInput = getCellText(sheet.getRow(i).getCell(6));
               //  System.out.println(secondDateInput);
                 //todo преобразование даты:
 
@@ -64,20 +64,18 @@ String nameCreateSheet = "В поверку";
                     // Если дней нет, добавляем "01" к строке даты
                     secondDateInput = "01." + secondDateInput;
                     System.out.println("Добавили 01: ");
+                  /*  Row row = sheet.createRow(i);
+                    Cell cell = row.createCell(6);
+                    cell.setCellValue(secondDateInput);*/
                 }
 
-                // System.out.println(secondDateInput);
-                // System.out.println("Today : " + textToday);
-                //   System.out.println("secondDateInput : " + secondDateInput);
 
                 LocalDate parseToday = LocalDate.parse(textToday, formatter);  //преобразуем текст в дату
                 LocalDate parseSecondDateInput = LocalDate.parse(secondDateInput, formatter);  //преобразуем текст в дату
 
                 // Вычисление разницы между датами
                 Period period = Period.between(parseToday, parseSecondDateInput);
-                //  System.out.println("parseToday : " + parseToday + "\n" + "parseSecondDateInput : " + parseSecondDateInput);
-                ///System.out.println(period);
-                // Получение разницы в месяцах
+                 // Получение разницы в месяцах
                 int monthsDifference = period.getYears() * 12 + period.getMonths();
 
                 //   System.out.println("Разница между датами в месяцах: " + monthsDifference);
