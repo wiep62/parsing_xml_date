@@ -39,7 +39,7 @@ public class Main {
 String outputFile = "OUTput111133.xls";
 int NUM_OF_ROWS = 132;
 int NUM_OF_COLUMNS = 7;
-String nameGetSheet = "ГРП";
+String nameGetSheet = "ШРП";
 String nameCreateSheet = "В поверку";
 
         FileInputStream fis = new FileInputStream(inputFile);
@@ -55,83 +55,147 @@ String nameCreateSheet = "В поверку";
         // Ввод второй даты
 
         for(int i = 1; i <=NUM_OF_ROWS; i++){
-            if (sheet.getRow(i).getCell(6) != null) {
+            String dateMode = getCellText(sheet.getRow(i).getCell(5));
+
+                 if (sheet.getRow(i).getCell(6) != null) {
+
+
+
                 String secondDateInput = getCellText(sheet.getRow(i).getCell(6));
-              //  System.out.println(secondDateInput);
+                String DateInput = getCellText(sheet.getRow(i).getCell(5));
+                Double doubleDateInput = Double.parseDouble (DateInput); //год выпуска датчика
                 //todo преобразование даты:
 
                 if (secondDateInput.matches("^\\d{2}\\.\\d{4}$")) {
                     // Если дней нет, добавляем "01" к строке даты
                     secondDateInput = "01." + secondDateInput;
-                    System.out.println("Добавили 01: ");
-                  /*  Row row = sheet.createRow(i);
-                    Cell cell = row.createCell(6);
-                    cell.setCellValue(secondDateInput);*/
+                   // System.out.println("Добавили 01: ");
+
                 }
 
 
                 LocalDate parseToday = LocalDate.parse(textToday, formatter);  //преобразуем текст в дату
                 LocalDate parseSecondDateInput = LocalDate.parse(secondDateInput, formatter);  //преобразуем текст в дату
+                LocalDate newDatePoverka;
+                //todo добавляем срок поверки для датчика
 
-                // Вычисление разницы между датами
-                Period period = Period.between(parseToday, parseSecondDateInput);
-                 // Получение разницы в месяцах
+
+                if (doubleDateInput >= 2019.0) {
+                    newDatePoverka = parseSecondDateInput.plusYears(6);
+                } else {
+                    newDatePoverka = parseSecondDateInput.plusYears(2);
+                }
+                // Вычисление разницы между даты будущей поверки и настоящей даты:
+                Period period = Period.between(parseToday, newDatePoverka);
+                // Получение разницы в месяцах
                 int monthsDifference = period.getYears() * 12 + period.getMonths();
 
-                //   System.out.println("Разница между датами в месяцах: " + monthsDifference);
 
-                if (monthsDifference <=3){
+                    //если год выпуска > 2019, осталось 3 месяца до конца, с момента поверки прошло 6 лет
+                if (doubleDateInput >= 2019.0 && monthsDifference <=3 ) {
+                    System.out.println(doubleDateInput + " 4islo " +i);
+                    System.out.println(newDatePoverka + " newDatePoverka " +i);
                     System.out.println("До оканчания поверки осталось: " + monthsDifference + " месяцев");
 
+//todo создаем список датчиков с необходимостью поверки:
+                        Row row = sheet0.createRow(i);
+
+                        for (int j = 0; j <= NUM_OF_COLUMNS; j++) {
+/**создаем ячейку в строке: */
+                            //Cell cell = row.createCell(j);
+                            Cell cell = row.createCell(j);
+                            switch (j) {
+                                case 0:
+                                    cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+
+                                    break;
+                                case 1:
+                                    cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+
+                                    break;
+                                case 2:
+                                    cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+
+
+                                    break;
+                                case 3:
+                                    cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+
+
+                                    break;
+                                case 4:
+                                    cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+
+                                    break;
+                                case 5:
+                                    cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+
+                                    break;
+                                case 6:
+                                    cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+
+                                    break;
+                                case 7:
+                                    cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+
+                                    break;
+
+                            }
+
+
+                        }
+//датчики у которых срок поверки 1 раз в 2 года:
+                } else if (monthsDifference <=3){
+                    System.out.println(getCellText(sheet.getRow(i).getCell(0)) + " : " + doubleDateInput + " строка " +i);
+                    System.out.println("Нужно поверять: "+ newDatePoverka + "  " +i);
+                    System.out.println("До оканчания поверки осталось: " + monthsDifference + " месяцев");
+
+                    //todo создаем список датчиков с необходимостью поверки:
                     Row row = sheet0.createRow(i);
 
                     for (int j = 0; j <= NUM_OF_COLUMNS; j++) {
+/**создаем ячейку в строке: */
 
-    //Cell cell = row.createCell(j);
-Cell cell = row.createCell(j);
-    switch (j) {
-        case 0:
-            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+                        Cell cell = row.createCell(j);
+                        switch (j) {
+                            case 0:
+                                cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
 
-            break;
-        case 1:
-            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+                                break;
+                            case 1:
+                                cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
 
-            break;
-        case 2:
-            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
-
-
-            break;
-        case 3:
-            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+                                break;
+                            case 2:
+                                cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
 
 
-            break;
-        case 4:
-            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
-
-            break;
-        case 5:
-            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
-
-            break;
-        case 6:
-            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
-
-            break;
-        case 7:
-            cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
-
-            break;
-
-    }
+                                break;
+                            case 3:
+                                cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
 
 
-}
+                                break;
+                            case 4:
+                                cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+
+                                break;
+                            case 5:
+                                cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+
+                                break;
+                            case 6:
+                                cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+
+                                break;
+                            case 7:
+                                cell.setCellValue(getCellText(sheet.getRow(i).getCell(j)));
+
+                                break;
+
+                        } }
+
                 }
-                // return monthsDifference;
-
 
             } else {
                 System.out.println("значение отсутствует");
@@ -147,6 +211,15 @@ Cell cell = row.createCell(j);
           fis.close();
 
     }}
+
+
+    public boolean isTimePoverka(Cell cell, int i) {
+//если датчик РС-28В или его год выпуска >= 2019 :
+
+
+    return true;
+    }
+
     public static String getCellText(Cell cell) {
         String result = "";
         switch (cell.getCellType()) {
